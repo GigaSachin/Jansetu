@@ -51,14 +51,51 @@ docker compose down
 
 ---
 
-## 🛠️ Production Cloud Deployment Strategy
+## 🌐 Live Production Deployments (SIH PS 26043)
 
-| Component | Recommended Free / Cloud Host | Build Command / Setup |
-| :--- | :--- | :--- |
-| **Frontend** | **Vercel** / **Netlify** / **Cloudflare Pages** | Build: `npm run build`, Output: `dist`, SPA Routing handled via `vercel.json` & `_redirects` |
-| **Backend** | **Render** / **Railway** / **Fly.io** / **AWS EC2** | Build: `npm run build`, Start: `node dist/server.js` |
-| **Database** | **Neon** / **Supabase** / **AWS RDS** (PostgreSQL 16) | Execute `server/src/database/schema.sql` |
-| **AI Engine** | **Render** / **Railway** / **Fly.io** | Start: `uvicorn app.main:app --host 0.0.0.0 --port 8000` |
+- **Frontend (Vercel CDN)**: [https://jansetu-two.vercel.app](https://jansetu-two.vercel.app)
+- **Backend API Gateway (Render)**: [https://jansetu-backend.onrender.com](https://jansetu-backend.onrender.com) (`/api/health`)
+- **FastAPI AI Engine (Render)**: [https://jansetu-ai-engine.onrender.com](https://jansetu-ai-engine.onrender.com) (`/health`, `/docs`)
+- **Database (Supabase PostgreSQL)**: 10 tables relational schema with geospatial indexing
+
+---
+
+## 🏆 Standout Hackathon Features (Why JanSetu Wins)
+
+1. **📐 AI Interactive Engineering CAD Cross-Section & FEA Stress Sim**:
+   - Interactive 4-layer engineering cross-section (Fly-ash paver, choke bed, basalt reservoir, perforated pipe).
+   - Live **40-Tonne Dynamic Axle Load simulation** computing real-time deflection and percolation rates.
+   - Available on any issue page via the **"AI CAD Blueprint"** button.
+
+2. **💬 WhatsApp Civic Bot Simulator & Printable Panchayat QR Kiosk**:
+   - Rural citizens with zero digital literacy can submit voice notes/photos via WhatsApp (`+91 94311 00000`).
+   - 1-Click **"Print A4 Panchayat Notice Board Poster"** with bilingual instructions and auto-generated QR code.
+   - Available on the `/explore` page.
+
+3. **🌧️ AI Predictive Weather & Monsoon Risk Radar (Proactive Governance)**:
+   - IMD weather forecast cross-referenced with elevation & drainage vulnerability.
+   - Triggers automated municipal pre-clearing work orders **before** flooding occurs.
+
+4. **🗺️ Interactive 24-District Jharkhand GIS Heatmap**:
+   - Live district-level problem density, resolution speed, and academic match metrics on `/impact`.
+
+5. **🗣️ 5 Regional Languages & Dialects with Text-to-Speech**:
+   - Supports English, Hindi (हिन्दी), Nagpuri (नागपुरी), Khortha (खोरठा), and Santhali (संताली).
+
+---
+
+## 🎤 3-Minute Judge Presentation Script
+
+1. **Minute 1 — The Problem & Citizen Voice (`/report` & `/explore`)**:
+   - Show how a citizen reports an issue with GPS auto-detection, photo upload, and voice recording in regional dialects.
+   - Pop open the **WhatsApp Bot Simulator & Panchayat QR Poster** to prove rural accessibility.
+2. **Minute 2 — AI Triage & Academic Synergy (`/problems/:id` & `/university/workspace`)**:
+   - Show the **AI Engine** matching the problem to BIT Mesra & Ramgarh PWD.
+   - Click **"AI CAD Blueprint"** and run the **40-Tonne Stress Test Simulation**.
+   - Show the **Capstone Feasibility & Material Budget Estimator** in the University Workspace.
+3. **Minute 3 — Proactive Governance & State Impact (`/impact` & Predictive Radar)**:
+   - Highlight the **Predictive Monsoon Risk Radar** generating pre-clearing work orders.
+   - Show the **24-District Jharkhand Heatmap** for transparent public oversight.
 
 ---
 
