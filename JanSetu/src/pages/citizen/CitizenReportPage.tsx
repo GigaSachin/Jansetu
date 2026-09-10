@@ -145,35 +145,85 @@ export const CitizenReportPage: React.FC = () => {
     { category: 'Other', icon: HelpCircle, label: language === 'hi' ? 'अन्य नागरिक समस्या' : 'Other' },
   ];
 
+  const [latitude, setLatitude] = useState<number>(23.6338);
+  const [longitude, setLongitude] = useState<number>(85.5186);
+
+  const fileInputRef = React.useRef<HTMLInputElement | null>(null);
+  const cameraInputRef = React.useRef<HTMLInputElement | null>(null);
+  const videoInputRef = React.useRef<HTMLInputElement | null>(null);
+  const docInputRef = React.useRef<HTMLInputElement | null>(null);
+
   const handleDetectLocation = () => {
     setLocDetecting(true);
-    setTimeout(() => {
+    if (typeof navigator !== 'undefined' && navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        async (pos) => {
+          const lat = pos.coords.latitude;
+          const lng = pos.coords.longitude;
+          setLatitude(lat);
+          setLongitude(lng);
+
+          try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 3500);
+            const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=14&addressdetails=1`, {
+              signal: controller.signal
+            });
+            clearTimeout(timeoutId);
+
+            if (res.ok) {
+              const data = await res.json();
+              const addr = data.address || {};
+              const detectedDistrict = addr.state_district || addr.county || addr.city || 'Ramgarh';
+              const matchedDist = JHARKHAND_DISTRICTS.find(d => detectedDistrict.toLowerCase().includes(d.toLowerCase())) || 'Ramgarh';
+              
+              setLocality(addr.suburb || addr.neighbourhood || addr.road || 'Current GPS Location');
+              setBlock(addr.village || addr.town || addr.municipality || `${matchedDist} Block`);
+              setCity(addr.city || addr.town || addr.village || matchedDist);
+              setDistrict(matchedDist);
+              if (addr.postcode) setPincode(addr.postcode);
+            } else {
+              setLocality(`GPS: ${lat.toFixed(4)}°N, ${lng.toFixed(4)}°E`);
+            }
+          } catch {
+            setLocality(`GPS: ${lat.toFixed(4)}°N, ${lng.toFixed(4)}°E`);
+          }
+          setLocDetecting(false);
+        },
+        (err) => {
+          console.warn('Geolocation failed or permission denied:', err);
+          // Fallback to default Jharkhand location
+          setLocality('Dushad Mohalla, Ward 12');
+          setBlock('Ramgarh Block');
+          setCity('Ramgarh');
+          setDistrict('Ramgarh');
+          setPincode('829122');
+          setLocDetecting(false);
+        },
+        { timeout: 7000, enableHighAccuracy: true }
+      );
+    } else {
       setLocDetecting(false);
-      setLocality('Dushad Mohalla, Ward 12');
-      setBlock('Ramgarh Block');
-      setCity('Ramgarh');
-      setDistrict('Ramgarh');
-      setPincode('829122');
-    }, 600);
+    }
   };
 
-  const handleAddMockFile = (type: 'image' | 'video' | 'document') => {
-    const randomId = `ev-${Date.now()}`;
-    const newFile: EvidenceFile = {
-      id: randomId,
-      name: type === 'image' 
-        ? `site_photo_${Date.now().toString().slice(-4)}.jpg` 
-        : type === 'video' 
-        ? `ground_video_clip.mp4` 
-        : `grievance_application.pdf`,
-      size: type === 'video' ? 14200000 : 1850000,
-      type,
-      url: type === 'image' 
-        ? 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=600&auto=format&fit=crop&q=80'
-        : '#',
-      uploadedAt: new Date().toISOString()
-    };
-    setEvidenceFiles(prev => [...prev, newFile]);
+  const handleRealFileUpload = (e: React.ChangeEvent<HTMLInputElement>, fileType: 'image' | 'video' | 'document') => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    Array.from(files).forEach((file) => {
+      const fileUrl = URL.createObjectURL(file);
+      const newFile: EvidenceFile = {
+        id: `ev-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+        name: file.name,
+        size: file.size,
+        type: fileType,
+        url: fileUrl,
+        uploadedAt: new Date().toISOString()
+      };
+      setEvidenceFiles((prev) => [...prev, newFile]);
+    });
+    e.target.value = '';
   };
 
   const handleRemoveFile = (id: string) => {
@@ -525,7 +575,7 @@ export const CitizenReportPage: React.FC = () => {
                     📍 {locality}, {city}
                   </span>
                   <span className="text-[11px] text-slate-500 font-mono mt-0.5">
-                    Lat: 23.6338° N • Lng: 85.5186° E (Ramgarh, Jharkhand)
+                    Lat: {latitude.toFixed(4)}° N • Lng: {longitude.toFixed(4)}° E ({district}, {stateName})
                   </span>
                 </div>
               </div>
@@ -698,12 +748,44 @@ export const CitizenReportPage: React.FC = () => {
             </p>
 
             <div className="space-y-6">
+              {/* Hidden Real File Inputs */}
+              <input 
+                type="file" 
+                ref={cameraInputRef} 
+                accept="image/*" 
+                capture="environment" 
+                className="hidden" 
+                onChange={(e) => handleRealFileUpload(e, 'image')} 
+              />
+              <input 
+                type="file" 
+                ref={fileInputRef} 
+                accept="image/*" 
+                multiple 
+                className="hidden" 
+                onChange={(e) => handleRealFileUpload(e, 'image')} 
+              />
+              <input 
+                type="file" 
+                ref={videoInputRef} 
+                accept="video/*" 
+                className="hidden" 
+                onChange={(e) => handleRealFileUpload(e, 'video')} 
+              />
+              <input 
+                type="file" 
+                ref={docInputRef} 
+                accept=".pdf,.doc,.docx,application/pdf" 
+                multiple 
+                className="hidden" 
+                onChange={(e) => handleRealFileUpload(e, 'document')} 
+              />
               
               {/* Media Picker Options */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 <button
                   type="button"
-                  onClick={() => handleAddMockFile('image')}
+                  onClick={() => cameraInputRef.current?.click()}
                   className="p-4 rounded-2xl border-2 border-dashed border-slate-200 hover:border-brand-500 hover:bg-brand-50/50 flex flex-col items-center text-center transition"
                 >
                   <div className="w-10 h-10 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center mb-2">
@@ -715,7 +797,7 @@ export const CitizenReportPage: React.FC = () => {
 
                 <button
                   type="button"
-                  onClick={() => handleAddMockFile('image')}
+                  onClick={() => fileInputRef.current?.click()}
                   className="p-4 rounded-2xl border-2 border-dashed border-slate-200 hover:border-brand-500 hover:bg-brand-50/50 flex flex-col items-center text-center transition"
                 >
                   <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-2">
@@ -727,7 +809,7 @@ export const CitizenReportPage: React.FC = () => {
 
                 <button
                   type="button"
-                  onClick={() => handleAddMockFile('video')}
+                  onClick={() => videoInputRef.current?.click()}
                   className="p-4 rounded-2xl border-2 border-dashed border-slate-200 hover:border-brand-500 hover:bg-brand-50/50 flex flex-col items-center text-center transition"
                 >
                   <div className="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center mb-2">
@@ -739,7 +821,7 @@ export const CitizenReportPage: React.FC = () => {
 
                 <button
                   type="button"
-                  onClick={() => handleAddMockFile('document')}
+                  onClick={() => docInputRef.current?.click()}
                   className="p-4 rounded-2xl border-2 border-dashed border-slate-200 hover:border-brand-500 hover:bg-brand-50/50 flex flex-col items-center text-center transition"
                 >
                   <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center mb-2">
