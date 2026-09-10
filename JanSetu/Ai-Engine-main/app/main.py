@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import time
 import requests
 import os
+import uvicorn
 
 from app.models.schemas import TriageRequest, TriageResultResponse
 from app.services.triage import evaluate_triage_and_domain, analyze_severity_and_impact
@@ -96,6 +97,14 @@ def process_ai_pipeline(req: TriageRequest):
     except Exception as e:
         AI_JOB_REGISTRY[pid] = {"problemId": pid, "status": "FAILED", "error": str(e)}
 
+@app.get("/")
+def root():
+    return {
+        "name": "JanSetu AI Engine v2",
+        "status": "ONLINE",
+        "version": "2.0.0"
+    }
+
 @app.post("/triage")
 def trigger_triage(req: TriageRequest, bg: BackgroundTasks):
     AI_JOB_REGISTRY[req.problemId] = {
@@ -119,3 +128,7 @@ def health():
         "supported_domains": 14,
         "active_institutions": len(JHARKHAND_INSTITUTIONS)
     }
+
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 8000))
+    uvicorn.run("app.main:app", host="0.0.0.0", port=port, reload=False)
