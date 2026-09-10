@@ -7,8 +7,9 @@ import { StatusBadge } from '../components/common/StatusBadge';
 import { SpeakButton } from '../components/common/SpeakButton';
 import { SpeechFormatters } from '../utils/speechFormatters';
 import { AiTriageDossier } from '../components/ai/AiTriageDossier';
-import { EvidenceFile } from '../types';
+import { EngineeringBlueprintModal } from '../components/ai/EngineeringBlueprintModal';
 import { aiEngineService, TriageResultResponse } from '../services/aiEngineService';
+import { EvidenceFile } from '../types';
 import { 
   ChevronLeft, 
   MapPin, 
@@ -22,7 +23,9 @@ import {
   Printer,
   Download,
   MessageCircle,
-  Share2
+  Share2,
+  Compass,
+  Layers
 } from 'lucide-react';
 
 export const ProblemDetailPage: React.FC = () => {
@@ -30,6 +33,7 @@ export const ProblemDetailPage: React.FC = () => {
   const { getIssueById, toggleUpvote } = useIssues();
   const { language } = useLanguage();
   const [copiedLink, setCopiedLink] = useState(false);
+  const [showBlueprintModal, setShowBlueprintModal] = useState(false);
 
   const issue = getIssueById(id || 'JS-2026-001245');
 
@@ -143,6 +147,14 @@ export const ProblemDetailPage: React.FC = () => {
             >
               <Share2 className="w-3.5 h-3.5" />
               <span>{copiedLink ? (language === 'hi' ? 'कॉपी हुआ!' : 'Copied!') : (language === 'hi' ? 'लिंक कॉपी' : 'Copy Link')}</span>
+            </button>
+            <button
+              onClick={() => setShowBlueprintModal(true)}
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-xs font-bold shadow-xs transition"
+              title="Inspect AI-Generated 4-Layer Engineering CAD Cross-Section & FEA Stress Sim"
+            >
+              <Layers className="w-3.5 h-3.5" />
+              <span>{language === 'hi' ? 'सीएडी ब्लूप्रिंट' : 'AI CAD Blueprint'}</span>
             </button>
             <button
               onClick={() => toggleUpvote(issue.id)}
@@ -305,6 +317,14 @@ export const ProblemDetailPage: React.FC = () => {
           )}
 
         </div>
+
+        {/* AI CAD Engineering Blueprint Modal */}
+        <EngineeringBlueprintModal
+          isOpen={showBlueprintModal}
+          onClose={() => setShowBlueprintModal(false)}
+          title={issue.title}
+          category={issue.category}
+        />
 
       </div>
     </div>

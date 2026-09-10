@@ -4,6 +4,8 @@ import { useIssues } from '../context/IssuesContext';
 import { useLanguage } from '../context/LanguageContext';
 import { StatusBadge } from '../components/common/StatusBadge';
 import { ProgressBar } from '../components/common/ProgressBar';
+import { WhatsAppBotModal } from '../components/citizen/WhatsAppBotModal';
+import { PredictiveRiskRadar } from '../components/ai/PredictiveRiskRadar';
 import { Issue } from '../types';
 import { 
   Search, 
@@ -13,7 +15,8 @@ import {
   ArrowRight, 
   Sparkles,
   Building2,
-  GraduationCap
+  GraduationCap,
+  MessageCircle
 } from 'lucide-react';
 
 const JHARKHAND_DISTRICTS = [
@@ -47,6 +50,7 @@ const JHARKHAND_DISTRICTS = [
 export const ExploreProblemsPage: React.FC = () => {
   const { issues, toggleUpvote } = useIssues();
   const { language, t } = useLanguage();
+  const [showWhatsAppModal, setShowWhatsAppModal] = useState(false);
   
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
@@ -58,21 +62,24 @@ export const ExploreProblemsPage: React.FC = () => {
     'All',
     'Water & Sanitation',
     'Accessibility & Inclusion',
-    'Waste Management',
+    'Roads & Transport',
+    'Healthcare Access',
     'Electricity & Lighting',
-    'Agriculture & Rural',
-    'Roads & Transport'
+    'Waste Management',
+    'Education Infrastructure',
+    'Agriculture & Rural'
   ];
 
-  const filteredIssues = issues.filter((issue: Issue) => {
-    const matchesSearch = issue.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          issue.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          issue.location.city.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          issue.location.district.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          issue.id.toLowerCase().includes(searchQuery.toLowerCase());
-    
+  const filteredIssues = issues.filter(issue => {
+    const matchesSearch = 
+      issue.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      issue.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      issue.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      issue.location.city.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      issue.location.district.toLowerCase().includes(searchQuery.toLowerCase());
+
     const matchesCategory = selectedCategory === 'All' || issue.category === selectedCategory;
-    const matchesDistrict = selectedDistrict === 'All Districts' || issue.location.district.toLowerCase() === selectedDistrict.toLowerCase() || selectedDistrict.includes(issue.location.district);
+    const matchesDistrict = selectedDistrict === 'All Districts' || issue.location.district.toLowerCase().includes(selectedDistrict.toLowerCase());
     const matchesStatus = selectedStatus === 'All' || issue.status === selectedStatus;
     const matchesSeverity = selectedSeverity === 'All' || issue.severity === selectedSeverity;
 
@@ -81,10 +88,16 @@ export const ExploreProblemsPage: React.FC = () => {
 
   return (
     <div className="min-h-screen pt-28 pb-20 bg-slate-50/50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
         
+        {/* WhatsApp & Panchayat QR Modal */}
+        <WhatsAppBotModal 
+          isOpen={showWhatsAppModal} 
+          onClose={() => setShowWhatsAppModal(false)} 
+        />
+
         {/* Header */}
-        <div className="text-center max-w-3xl mx-auto mb-10">
+        <div className="text-center max-w-3xl mx-auto">
           <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-bold bg-brand-50 text-brand-700 border border-brand-200 mb-3">
             <Search className="w-3.5 h-3.5" />
             <span>{language === 'hi' ? 'झारखंड ओपन नागरिक रजिस्ट्री' : 'Jharkhand Open Civic Registry'}</span>
@@ -99,10 +112,24 @@ export const ExploreProblemsPage: React.FC = () => {
               : 'Explore verified civic challenges across Jharkhand open for university capstones, potential CSR support, and collaborative execution.'
             }
           </p>
+
+          <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
+            <button
+              type="button"
+              onClick={() => setShowWhatsAppModal(true)}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-xs transition"
+            >
+              <MessageCircle className="w-4 h-4" />
+              <span>{language === 'hi' ? 'व्हाट्सएप बॉट व क्यूआर कियोस्क टेस्ट करें' : 'Test WhatsApp Bot & QR Kiosk'}</span>
+            </button>
+          </div>
         </div>
 
+        {/* Standout Feature: AI Predictive Weather & Flood Radar */}
+        <PredictiveRiskRadar />
+
         {/* Search & Filter Command Center */}
-        <div className="bg-white rounded-3xl border border-slate-200 p-5 sm:p-6 shadow-card mb-8">
+        <div className="bg-white rounded-3xl border border-slate-200 p-5 sm:p-6 shadow-card">
           
           {/* Main Search Bar */}
           <div className="relative mb-4">

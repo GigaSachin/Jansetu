@@ -9,6 +9,7 @@ import { AiTriageDossier } from '../../components/ai/AiTriageDossier';
 import { SpeakButton } from '../../components/accessibility/SpeakButton';
 import { SpeechFormatters } from '../../utils/speechFormatters';
 import { aiEngineService, TriageResultResponse } from '../../services/aiEngineService';
+import { EngineeringBlueprintModal } from '../../components/ai/EngineeringBlueprintModal';
 import { 
   ChevronLeft, 
   MapPin, 
@@ -18,12 +19,13 @@ import {
   ShieldCheck, 
   GraduationCap, 
   CheckCircle2, 
-  Calendar,
-  Users,
-  Building2,
-  Printer,
-  Download,
-  MessageCircle
+  Calendar, 
+  Users, 
+  Building2, 
+  Printer, 
+  Download, 
+  MessageCircle, 
+  Layers 
 } from 'lucide-react';
 
 export const CitizenIssueDetailPage: React.FC = () => {
@@ -35,6 +37,7 @@ export const CitizenIssueDetailPage: React.FC = () => {
 
   const [commentText, setCommentText] = useState('');
   const [copiedLink, setCopiedLink] = useState(false);
+  const [showBlueprintModal, setShowBlueprintModal] = useState(false);
   const [aiTriage, setAiTriage] = useState<TriageResultResponse | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [engineHealth, setEngineHealth] = useState<{ isOnline: boolean; status: string }>({
@@ -139,6 +142,14 @@ export const CitizenIssueDetailPage: React.FC = () => {
           </Link>
 
           <div className="flex flex-wrap items-center gap-2">
+            <button
+              onClick={() => setShowBlueprintModal(true)}
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-xs font-bold shadow-xs transition"
+              title="Inspect AI-Generated 4-Layer Engineering CAD Cross-Section & FEA Stress Sim"
+            >
+              <Layers className="w-3.5 h-3.5" />
+              <span>{isHindi ? 'सीएडी ब्लूप्रिंट' : 'AI CAD Blueprint'}</span>
+            </button>
             <button
               onClick={handleWhatsAppShare}
               className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-xs transition"
@@ -462,6 +473,14 @@ export const CitizenIssueDetailPage: React.FC = () => {
           </div>
 
         </div>
+
+        {/* AI CAD Engineering Blueprint Modal */}
+        <EngineeringBlueprintModal
+          isOpen={showBlueprintModal}
+          onClose={() => setShowBlueprintModal(false)}
+          title={issue.title}
+          category={issue.category}
+        />
 
       </div>
     </div>
