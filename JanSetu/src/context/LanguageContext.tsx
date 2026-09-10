@@ -1,19 +1,34 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
-export type Language = 'en' | 'hi';
+export type Language = 'en' | 'hi' | 'nag' | 'kho' | 'sat';
 
 export interface Translations {
   [key: string]: {
     en: string;
     hi: string;
+    nag?: string;
+    kho?: string;
+    sat?: string;
   };
 }
 
 export const DICTIONARY: Translations = {
   // Brand & Slogan
-  app_name: { en: 'JanSetu', hi: 'जनसेतु' },
-  tagline: { en: '"Jan Ki Baat, Solution Ke Saath."', hi: '"जन की बात, समाधान के साथ।"' },
-  subtagline: { en: 'Connecting people to solutions', hi: 'समस्याओं से समाधान तक' },
+  app_name: { en: 'JanSetu', hi: 'जनसेतु', nag: 'जनसेतु', kho: 'जनसेतु', sat: 'ᱡᱟᱱᱥᱮᱛᱩ' },
+  tagline: { 
+    en: '"Jan Ki Baat, Solution Ke Saath."', 
+    hi: '"जन की बात, समाधान के साथ।"',
+    nag: '"जनता कर बात, समाधान कर साथ।"',
+    kho: '"मनुख के बात, निदान के साथ।"',
+    sat: '"ᱦᱚᱲ ᱠᱚᱣᱟᱜ ᱠᱟᱛᱷᱟ, ᱥᱟᱢᱟᱫᱷᱟᱱ ᱥᱟᱶᱛᱮ"'
+  },
+  subtagline: { 
+    en: 'Connecting people to solutions', 
+    hi: 'समस्याओं से समाधान तक',
+    nag: 'तकलीफ से समाधान तक',
+    kho: 'दिक्कत से समाधान तक',
+    sat: 'ᱮᱴᱠᱮᱴᱚᱬᱮ ᱠᱷᱚᱱ ᱥᱟᱢᱟᱫᱷᱟᱱ'
+  },
   positioning_badge: { en: 'JANSETU • JHARKHAND CIVIC RESOLUTION ENGINE', hi: 'जनसेतु • झारखंड नागरिक समाधान इंजन' },
   
   // Navigation
@@ -145,7 +160,7 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [language, setLanguageState] = useState<Language>(() => {
     const saved = localStorage.getItem('jansetu_lang');
-    return (saved === 'hi' || saved === 'en') ? saved : 'en';
+    return (['en', 'hi', 'nag', 'kho', 'sat'].includes(saved || '')) ? (saved as Language) : 'en';
   });
 
   const setLanguage = (lang: Language) => {
@@ -154,12 +169,15 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   };
 
   useEffect(() => {
-    document.documentElement.lang = language;
+    document.documentElement.lang = language === 'en' ? 'en' : 'hi';
   }, [language]);
 
   const t = (key: string, fallback?: string): string => {
-    if (DICTIONARY[key] && DICTIONARY[key][language]) {
-      return DICTIONARY[key][language];
+    if (DICTIONARY[key]) {
+      const entry = DICTIONARY[key] as any;
+      if (entry[language]) return entry[language];
+      if (['nag', 'kho', 'sat'].includes(language) && entry.hi) return entry.hi;
+      if (entry.en) return entry.en;
     }
     return fallback || key;
   };

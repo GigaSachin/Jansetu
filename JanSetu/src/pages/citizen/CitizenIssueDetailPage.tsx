@@ -20,7 +20,10 @@ import {
   CheckCircle2, 
   Calendar,
   Users,
-  Building2
+  Building2,
+  Printer,
+  Download,
+  MessageCircle
 } from 'lucide-react';
 
 export const CitizenIssueDetailPage: React.FC = () => {
@@ -69,6 +72,24 @@ export const CitizenIssueDetailPage: React.FC = () => {
     setIsAnalyzing(false);
   };
 
+  const handlePrintDossier = () => {
+    window.print();
+  };
+
+  const handleWhatsAppShare = () => {
+    if (!issue) return;
+    const shareUrl = window.location.href;
+    const text = 
+      `🚨 *JanSetu Civic Escalation Alert*\n\n` +
+      `📋 *Issue ID:* ${issue.id}\n` +
+      `📍 *Location:* ${issue.location.locality}, ${issue.location.city}, ${issue.location.district} (Jharkhand)\n` +
+      `🏷️ *Category:* ${issue.category} | *Severity:* ${issue.severity}\n` +
+      `📌 *Title:* ${issue.title}\n` +
+      `🤖 *AI Match:* ${aiTriage?.institutionMatches?.[0]?.name || 'Jharkhand HEI Consortium'}\n\n` +
+      `🔗 *Track live civic resolution:* ${shareUrl}`;
+    window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, '_blank');
+  };
+
   if (!issue) {
     return (
       <div className="min-h-screen pt-32 pb-20 bg-slate-50 flex items-center justify-center">
@@ -109,7 +130,7 @@ export const CitizenIssueDetailPage: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Navigation Breadcrumb */}
-        <div className="flex items-center justify-between gap-4 mb-6">
+        <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
           <Link
             to="/citizen/dashboard"
             className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-600 hover:text-slate-900"
@@ -117,13 +138,29 @@ export const CitizenIssueDetailPage: React.FC = () => {
             <ChevronLeft className="w-4 h-4" /> Back to Dashboard
           </Link>
 
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              onClick={handleWhatsAppShare}
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-xs transition"
+              title="Escalate via WhatsApp to MLA or Ward Commissioner"
+            >
+              <MessageCircle className="w-3.5 h-3.5" />
+              <span>{isHindi ? 'व्हाट्सएप शेयर' : 'WhatsApp Share'}</span>
+            </button>
+            <button
+              onClick={handlePrintDossier}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-300 bg-white text-xs font-bold text-slate-700 hover:bg-slate-50 shadow-xs transition"
+              title="Download/Print formatted Official Grievance Dossier PDF"
+            >
+              <Printer className="w-3.5 h-3.5 text-slate-600" />
+              <span>{isHindi ? 'पीडीएफ डॉसियर' : 'Print / PDF Dossier'}</span>
+            </button>
             <button
               onClick={handleShare}
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 bg-white text-xs font-bold text-slate-700 hover:bg-slate-50 shadow-xs"
             >
               <Share2 className="w-3.5 h-3.5" />
-              <span>{copiedLink ? 'Link Copied!' : 'Share Problem'}</span>
+              <span>{copiedLink ? 'Link Copied!' : 'Copy Link'}</span>
             </button>
             <button
               onClick={() => toggleUpvote(issue.id)}

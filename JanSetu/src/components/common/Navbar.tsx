@@ -108,26 +108,27 @@ export const Navbar: React.FC = () => {
           {/* Right Action Controls */}
           <div className="hidden md:flex items-center gap-3">
             
-            {/* Quick Language Toggle */}
+            {/* Quick Language / Dialect Toggle */}
             <div className="flex items-center rounded-xl bg-slate-100/90 p-1 border border-slate-200/90 text-xs font-bold">
-              <button
-                type="button"
-                onClick={() => setLanguage('en')}
-                className={`px-2 py-1 rounded-lg transition ${
-                  language === 'en' ? 'bg-white text-brand-800 shadow-xs font-black' : 'text-slate-500 hover:text-slate-800'
-                }`}
-              >
-                EN
-              </button>
-              <button
-                type="button"
-                onClick={() => setLanguage('hi')}
-                className={`px-2 py-1 rounded-lg transition ${
-                  language === 'hi' ? 'bg-white text-brand-800 shadow-xs font-black' : 'text-slate-500 hover:text-slate-800'
-                }`}
-              >
-                हिन्दी
-              </button>
+              {[
+                { id: 'en', label: 'EN' },
+                { id: 'hi', label: 'हिन्दी' },
+                { id: 'nag', label: 'नागपुरी' },
+                { id: 'kho', label: 'खोरठा' },
+                { id: 'sat', label: 'संताली' }
+              ].map((langItem) => (
+                <button
+                  key={langItem.id}
+                  type="button"
+                  onClick={() => setLanguage(langItem.id as any)}
+                  className={`px-2 py-1 rounded-lg transition text-[11px] ${
+                    language === langItem.id ? 'bg-white text-brand-800 shadow-xs font-black' : 'text-slate-500 hover:text-slate-800'
+                  }`}
+                  title={`Switch language to ${langItem.label}`}
+                >
+                  {langItem.label}
+                </button>
+              ))}
             </div>
 
             {/* Instant Demo Role Switcher */}

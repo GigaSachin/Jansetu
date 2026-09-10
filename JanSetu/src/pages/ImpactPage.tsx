@@ -845,6 +845,100 @@ export const ImpactPage: React.FC = () => {
 
         </div>
 
+        {/* ========================================================================= */}
+        {/* 7. INTERACTIVE JHARKHAND 24-DISTRICT GIS HEATMAP & INNOVATION EXPLORER */}
+        {/* ========================================================================= */}
+        <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-10 shadow-card space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100">
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="p-2 rounded-xl bg-emerald-50 text-emerald-700">
+                  <MapPin className="w-5 h-5" />
+                </span>
+                <h2 className="text-xl sm:text-2xl font-black text-slate-900">
+                  {isHindi ? 'झारखंड 24-ज़िला जीआईएस हीटमैप व नवाचार कॉरिडोर' : 'Jharkhand 24-District GIS Heatmap & Resolution Index'}
+                </h2>
+              </div>
+              <p className="text-xs sm:text-sm text-slate-500 mt-1">
+                {isHindi 
+                  ? 'झारखंड के सभी 24 ज़िलों में दर्ज समस्याएं, संबद्ध उच्च शिक्षण संस्थान और समाधान दर देखें।' 
+                  : 'Real-time interactive civic density, paired Higher Education Institutions (HEIs), and resolution indices across all 24 districts of Jharkhand.'}
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="px-3 py-1 rounded-full text-xs font-bold bg-brand-50 text-brand-700 border border-brand-200">
+                24 Districts Active
+              </span>
+            </div>
+          </div>
+
+          {/* Interactive 24-District Grid */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+            {[
+              { name: 'Ranchi', reported: 42, resolved: 28, hei: 'BIT Mesra / CUJ', heat: 'high' },
+              { name: 'Ramgarh', reported: 31, resolved: 18, hei: 'BIT Mesra Pilot', heat: 'high' },
+              { name: 'Dhanbad', reported: 38, resolved: 24, hei: 'IIT (ISM) Dhanbad', heat: 'high' },
+              { name: 'East Singhbhum', reported: 29, resolved: 19, hei: 'NIT Jamshedpur', heat: 'high' },
+              { name: 'Bokaro', reported: 22, resolved: 14, hei: 'BVS & Polytech', heat: 'medium' },
+              { name: 'Hazaribagh', reported: 19, resolved: 11, hei: 'Vinoba Bhave Univ', heat: 'medium' },
+              { name: 'Deoghar', reported: 16, resolved: 9, hei: 'AIIMS & Tech Hub', heat: 'medium' },
+              { name: 'Dumka', reported: 14, resolved: 7, hei: 'SKMU Dumka', heat: 'medium' },
+              { name: 'Giridih', reported: 12, resolved: 6, hei: 'Birsa Agri Wing', heat: 'medium' },
+              { name: 'West Singhbhum', reported: 11, resolved: 5, hei: 'Kolhan University', heat: 'low' },
+              { name: 'Saraikela', reported: 13, resolved: 8, hei: 'NIT JSR Corridor', heat: 'medium' },
+              { name: 'Palamu', reported: 15, resolved: 7, hei: 'NPU Medininagar', heat: 'medium' },
+              { name: 'Garhwa', reported: 9, resolved: 4, hei: 'Palamu Cluster', heat: 'low' },
+              { name: 'Latehar', reported: 8, resolved: 4, hei: 'Tribal Eco Labs', heat: 'low' },
+              { name: 'Chatra', reported: 7, resolved: 3, hei: 'VBU Extension', heat: 'low' },
+              { name: 'Gumla', reported: 9, resolved: 5, hei: 'BAU Agro Wing', heat: 'low' },
+              { name: 'Simdega', reported: 6, resolved: 3, hei: 'Hydrology Cell', heat: 'low' },
+              { name: 'Lohardaga', reported: 8, resolved: 4, hei: 'Mining Runoff Lab', heat: 'low' },
+              { name: 'Khunti', reported: 10, resolved: 6, hei: 'Solar Microgrid Lab', heat: 'low' },
+              { name: 'Koderma', reported: 11, resolved: 6, hei: 'Mica Reclamation', heat: 'low' },
+              { name: 'Jamtara', reported: 7, resolved: 4, hei: 'Digital Literacy Hub', heat: 'low' },
+              { name: 'Sahibganj', reported: 9, resolved: 5, hei: 'Ganga Basin Unit', heat: 'low' },
+              { name: 'Pakur', reported: 6, resolved: 3, hei: 'Stone Basin Study', heat: 'low' },
+              { name: 'Godda', reported: 8, resolved: 4, hei: 'Rural Power Lab', heat: 'low' },
+            ].map((d, i) => (
+              <div 
+                key={i} 
+                className={`p-3.5 rounded-2xl border transition-all duration-200 hover:-translate-y-0.5 shadow-2xs ${
+                  d.heat === 'high' 
+                    ? 'bg-rose-50/50 border-rose-200 hover:border-rose-400' 
+                    : d.heat === 'medium' 
+                    ? 'bg-amber-50/40 border-amber-200 hover:border-amber-400' 
+                    : 'bg-slate-50 border-slate-200 hover:border-emerald-300'
+                }`}
+              >
+                <div className="flex items-center justify-between gap-1 mb-1">
+                  <span className="font-extrabold text-xs text-slate-900 truncate" title={d.name}>
+                    {d.name}
+                  </span>
+                  <span className={`w-2 h-2 rounded-full shrink-0 ${
+                    d.heat === 'high' ? 'bg-rose-500 animate-pulse' : d.heat === 'medium' ? 'bg-amber-500' : 'bg-emerald-500'
+                  }`} />
+                </div>
+                <div className="text-[11px] text-slate-600 font-semibold flex items-center justify-between">
+                  <span>{d.reported} Reported</span>
+                  <span className="text-emerald-700 font-bold">{d.resolved} Solved</span>
+                </div>
+                <div className="mt-2 pt-1.5 border-t border-slate-200/60 text-[10px] text-brand-700 font-medium truncate" title={d.hei}>
+                  🎓 {d.hei}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-slate-100 text-xs text-slate-500">
+            <div className="flex items-center gap-4">
+              <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-rose-500" /> High Activity Innovation Corridors</span>
+              <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-amber-500" /> Developing Prototype Zones</span>
+              <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-emerald-500" /> Stable Resolution Network</span>
+            </div>
+            <span className="font-semibold text-slate-700">Covering 100% of Jharkhand Municipal & Tribal Blocks</span>
+          </div>
+        </div>
+
       </div>
     </div>
   );

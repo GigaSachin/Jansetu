@@ -18,15 +18,44 @@ import {
   GraduationCap, 
   Calendar,
   BrainCircuit,
-  RefreshCw
+  RefreshCw,
+  Printer,
+  Download,
+  MessageCircle,
+  Share2
 } from 'lucide-react';
 
 export const ProblemDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { getIssueById, toggleUpvote } = useIssues();
   const { language } = useLanguage();
+  const [copiedLink, setCopiedLink] = useState(false);
 
   const issue = getIssueById(id || 'JS-2026-001245');
+
+  const handlePrintDossier = () => {
+    window.print();
+  };
+
+  const handleWhatsAppShare = () => {
+    if (!issue) return;
+    const shareUrl = window.location.href;
+    const text = 
+      `🚨 *JanSetu Civic Escalation Alert*\n\n` +
+      `📋 *Issue ID:* ${issue.id}\n` +
+      `📍 *Location:* ${issue.location.locality}, ${issue.location.city}, ${issue.location.district} (Jharkhand)\n` +
+      `🏷️ *Category:* ${issue.category} | *Severity:* ${issue.severity}\n` +
+      `📌 *Title:* ${issue.title}\n` +
+      `🤖 *AI Match:* ${aiTriage?.institutionMatches?.[0]?.name || 'Jharkhand HEI Consortium'}\n\n` +
+      `🔗 *Track live civic resolution:* ${shareUrl}`;
+    window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, '_blank');
+  };
+
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(window.location.href);
+    setCopiedLink(true);
+    setTimeout(() => setCopiedLink(false), 2000);
+  };
 
   const [aiTriage, setAiTriage] = useState<TriageResultResponse | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -83,7 +112,7 @@ export const ProblemDetailPage: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Navigation */}
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
           <Link
             to="/explore"
             className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-600 hover:text-slate-900"
@@ -91,17 +120,42 @@ export const ProblemDetailPage: React.FC = () => {
             <ChevronLeft className="w-4 h-4" /> {language === 'hi' ? 'सभी चुनौतियां' : 'Back to All Challenges'}
           </Link>
 
-          <button
-            onClick={() => toggleUpvote(issue.id)}
-            className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold shadow-xs transition ${
-              issue.hasUpvoted
-                ? 'bg-brand-50 text-brand-700 border border-brand-200'
-                : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50'
-            }`}
-          >
-            <ThumbsUp className={`w-3.5 h-3.5 ${issue.hasUpvoted ? 'fill-brand-600' : ''}`} />
-            <span>{issue.upvotesCount} {language === 'hi' ? 'समर्थन' : 'Upvotes'}</span>
-          </button>
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              onClick={handleWhatsAppShare}
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-xs transition"
+              title="Escalate via WhatsApp"
+            >
+              <MessageCircle className="w-3.5 h-3.5" />
+              <span>{language === 'hi' ? 'व्हाट्सएप शेयर' : 'WhatsApp'}</span>
+            </button>
+            <button
+              onClick={handlePrintDossier}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-300 bg-white text-xs font-bold text-slate-700 hover:bg-slate-50 shadow-xs transition"
+              title="Download / Print Grievance Dossier"
+            >
+              <Printer className="w-3.5 h-3.5 text-slate-600" />
+              <span>{language === 'hi' ? 'पीडीएफ डॉसियर' : 'Print PDF'}</span>
+            </button>
+            <button
+              onClick={handleCopyLink}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 bg-white text-xs font-bold text-slate-700 hover:bg-slate-50 shadow-xs"
+            >
+              <Share2 className="w-3.5 h-3.5" />
+              <span>{copiedLink ? (language === 'hi' ? 'कॉपी हुआ!' : 'Copied!') : (language === 'hi' ? 'लिंक कॉपी' : 'Copy Link')}</span>
+            </button>
+            <button
+              onClick={() => toggleUpvote(issue.id)}
+              className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold shadow-xs transition ${
+                issue.hasUpvoted
+                  ? 'bg-brand-50 text-brand-700 border border-brand-200'
+                  : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50'
+              }`}
+            >
+              <ThumbsUp className={`w-3.5 h-3.5 ${issue.hasUpvoted ? 'fill-brand-600' : ''}`} />
+              <span>{issue.upvotesCount} {language === 'hi' ? 'समर्थन' : 'Upvotes'}</span>
+            </button>
+          </div>
         </div>
 
         {/* Problem Header Card */}

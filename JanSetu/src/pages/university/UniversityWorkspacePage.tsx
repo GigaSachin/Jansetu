@@ -189,6 +189,44 @@ export const UniversityWorkspacePage: React.FC = () => {
                   </button>
                 </div>
 
+                {/* AI Cost, Timeline & CSR Grant Estimator */}
+                <div className="p-5 rounded-2xl bg-indigo-50/70 border border-indigo-200 space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Sparkles className="w-4 h-4 text-indigo-600" />
+                      <span className="text-xs font-black text-indigo-900 uppercase tracking-wider">
+                        AI Capstone Cost & CSR Grant Feasibility Estimator
+                      </span>
+                    </div>
+                    <span className="text-[10px] font-bold text-indigo-700 bg-white px-2.5 py-0.5 rounded-full border border-indigo-200">
+                      Automated Feasibility
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+                    <div className="bg-white p-3 rounded-xl border border-indigo-100 shadow-2xs">
+                      <span className="text-slate-500 text-[11px] block">Estimated Prototype Budget</span>
+                      <strong className="text-slate-900 text-sm">₹1,25,000</strong>
+                      <span className="text-[10px] text-emerald-600 block mt-0.5">Lab material + Pavers</span>
+                    </div>
+                    <div className="bg-white p-3 rounded-xl border border-indigo-100 shadow-2xs">
+                      <span className="text-slate-500 text-[11px] block">CSR Grant Readiness</span>
+                      <strong className="text-emerald-700 text-sm">₹2,00,000</strong>
+                      <span className="text-[10px] text-slate-500 block mt-0.5">Tata Steel CSR aligned</span>
+                    </div>
+                    <div className="bg-white p-3 rounded-xl border border-indigo-100 shadow-2xs">
+                      <span className="text-slate-500 text-[11px] block">Deployment Timeline</span>
+                      <strong className="text-indigo-700 text-sm">6-8 Weeks</strong>
+                      <span className="text-[10px] text-slate-500 block mt-0.5">Academic Semester Cohort</span>
+                    </div>
+                    <div className="bg-white p-3 rounded-xl border border-indigo-100 shadow-2xs">
+                      <span className="text-slate-500 text-[11px] block">Carbon & Silt Reduction</span>
+                      <strong className="text-amber-700 text-sm">3.8 Tons CO₂</strong>
+                      <span className="text-[10px] text-slate-500 block mt-0.5">60% Recycled fly-ash</span>
+                    </div>
+                  </div>
+                </div>
+
                 <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-bold text-slate-800 uppercase tracking-wider">
